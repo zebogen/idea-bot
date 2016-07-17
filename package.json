@@ -1,0 +1,21 @@
+{
+  "name": "idea-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "idea-bot.js",
+  "dependencies": {
+    "botkit": "^0.2.2",
+    "cheerio": "^0.20.0",
+    "google-auth-library": "^0.9.8",
+    "google-spreadsheet": "^2.0.3",
+    "googleapis": "^7.1.0",
+    "request": "^2.73.0",
+    "slackbots": "^0.5.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
