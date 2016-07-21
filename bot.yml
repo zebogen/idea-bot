@@ -5,11 +5,14 @@ config:
     friendly_name: Google Sheets API email
     info: Email address of Google Sheets API service account
     type: secret
+    global: true
   - name: SHEETS_PRIVATE_KEY
     friendly_name: Google Sheets API private key
     info: Private key for Google Sheets API service account
     type: secret
+    global: true
   - name: SHEET_KEY
     friendly_name: Google Sheet Key
     info: Unique identifier of target spreadsheet (from Google URL)
     type: secret
+    global: true
