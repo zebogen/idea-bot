@@ -5,6 +5,7 @@ const os = require('os');
 const request = require('request');
 const cheerio = require('cheerio');
 const GoogleSpreadsheet = require('google-spreadsheet');
+const async = require('async');
 
 function getConfig() {
   return process.env.NODE_ENV === 'production' ? process.env : require('./secrets.js');
@@ -90,20 +91,28 @@ controller.setupWebserver(process.env.PORT || 3001, function(err, webserver) {
 controller.hears(['^#([^ ]*) <([^ ]*)>'], 'direct_message,direct_mention,mention', function(bot, message) {
   let tag = message.match[1];
   let url = message.match[2];
-  doc.useServiceAccountAuth(googleCreds, function() {
-    scrape(url, function(result) {
+  async.series([
+    function(step) {
+      doc.useServiceAccountAuth(googleCreds, step);
+    },
+    function(step) {
+      scrape(url, step);
+    },
+    function(result, step) {
       let row = {
         pageTitle: result.pageTitle,
         description: result.description,
         url: url
       };
-      addToSheet(doc, row, tag, function(err) {
-        if (err) {
-          bot.reply(message, "adding " + url + " to spreadsheet " + tag + " FAILED! Error: " + err);
-        } else {
-          bot.reply(message, "added " + url + " to spreadsheet " + tag);
-        }
-      });
-    });
-  });
+      addToSheet(doc, row, tag, step);
+    },
+    function(step) {
+      if (err) {
+        bot.reply(message, "adding " + url + " to spreadsheet " + tag + " FAILED! Error: " + err);
+      } else {
+        bot.reply(message, "added " + url + " to spreadsheet " + tag);
+      }
+      step();
+    }
+  ]);
 });

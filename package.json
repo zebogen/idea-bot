@@ -4,6 +4,7 @@
   "description": "",
   "main": "idea-bot.js",
   "dependencies": {
+    "async": "^2.0.0",
     "botkit": "^0.2.2",
     "cheerio": "^0.20.0",
     "google-auth-library": "^0.9.8",
