@@ -77,6 +77,7 @@ function parseStandardMetaTag(html, tagName) {
   return html(`meta[name="${tagName}"]`).attr('content');
 }
 
+console.log('Config' + config);
 let doc = new GoogleSpreadsheet(config.SHEET_KEY);
 let sheet;
 
