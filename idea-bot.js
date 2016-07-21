@@ -14,20 +14,18 @@ const config = getConfig();
 const googleCreds = { client_email: config.SHEETS_EMAIL, private_key: config.SHEETS_PRIVATE_KEY };
 
 function addToSheet(doc, row, tag, callback) {
-  doc.useServiceAccountAuth(googleCreds, function() {
-    doc.getInfo((err, info) => {
-      if (err) { console.log('google sheets error:' + err); }
-      const sheetNum = sheetNumber(info.worksheets, tag);
-      if (sheetNum === 0) {
-        doc.addWorksheet({ title: tag, headers: ['url', 'pageTitle', 'description'] }, function(sheet) {
-          doc.addRow(sheetNumber(info.worksheets, tag), row, callback);
-        });
-      }
-      else {
-        console.log('adding to row');
-        doc.addRow(sheetNum, row, callback);
-      }
-    });
+  doc.getInfo((err, info) => {
+    if (err) { console.log('google sheets error:' + err); }
+    const sheetNum = sheetNumber(info.worksheets, tag);
+    if (sheetNum === 0) {
+      doc.addWorksheet({ title: tag, headers: ['url', 'pageTitle', 'description'] }, function(sheet) {
+        doc.addRow(sheetNumber(info.worksheets, tag), row, callback);
+      });
+    }
+    else {
+      console.log('adding to row');
+      doc.addRow(sheetNum, row, callback);
+    }
   });
 }
 
@@ -77,9 +75,7 @@ function parseStandardMetaTag(html, tagName) {
   return html(`meta[name="${tagName}"]`).attr('content');
 }
 
-console.log('SHEET_KEY' + config.SHEET_KEY);
 let doc = new GoogleSpreadsheet(config.SHEET_KEY);
-let sheet;
 
 let controller = Botkit.slackbot();
 
@@ -100,12 +96,14 @@ controller.hears(['^#([^ ]*) <([^ ]*)>'], 'direct_message,direct_mention,mention
       description: result.description,
       url: url
     };
-    addToSheet(doc, row, tag, function(err) {
-      if (err) {
-        bot.reply(message, "adding " + url + " to spreadsheet " + tag + " FAILED! Error: " + err);
-      } else {
-        bot.reply(message, "added " + url + " to spreadsheet " + tag);
-      }
-    })
+    doc.useServiceAccountAuth(googleCreds, function() {
+      addToSheet(doc, row, tag, function(err) {
+        if (err) {
+          bot.reply(message, "adding " + url + " to spreadsheet " + tag + " FAILED! Error: " + err);
+        } else {
+          bot.reply(message, "added " + url + " to spreadsheet " + tag);
+        }
+      })
+    });
   });
 });
