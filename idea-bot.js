@@ -94,7 +94,6 @@ controller.hears(['^#([^ ]*) <([^ ]*)>'], 'direct_message,direct_mention,mention
   let tag = message.match[1];
   let url = message.match[2];
   scrape(url, function(result) {
-    console.log('callback from scrape: ' + result);
     let row = {
       pageTitle: result.pageTitle,
       description: result.description,
