@@ -93,12 +93,15 @@ controller.hears(['^#([^ ]*) <([^ ]*)>'], 'direct_message,direct_mention,mention
   let url = message.match[2];
   async.series([
     function(step) {
+      console.log('Google auth step');
       doc.useServiceAccountAuth(googleCreds, step);
     },
     function(step) {
+      console.log('Authenticated, scraping URL now');
       scrape(url, step);
     },
     function(result, step) {
+      console.log('URL scraped, adding to sheet');
       let row = {
         pageTitle: result.pageTitle,
         description: result.description,
