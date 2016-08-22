@@ -1,1 +1,1 @@
-web: NODE_ENV=production node idea-bot.js
+worker: NODE_ENV=production node idea-bot.js
