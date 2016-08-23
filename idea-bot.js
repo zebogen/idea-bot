@@ -16,7 +16,9 @@ const googleCreds = { client_email: config.SHEETS_EMAIL, private_key: config.SHE
 
 function addToSheet(doc, row, tag, callback) {
   doc.getInfo((err, info) => {
-    if (err) { console.log('google sheets error:' + err); }
+    if (err) {
+      console.log('google sheets error:' + err);
+    }
     const sheetNum = sheetNumber(info.worksheets, tag);
     if (sheetNum === 0) {
       doc.addWorksheet({ title: tag, headers: ['url', 'pageTitle', 'description'] }, function(sheet) {
@@ -110,13 +112,12 @@ controller.hears(['^#([^ ]*) <([^ ]*)>'], 'direct_message,direct_mention,mention
       };
       addToSheet(doc, row, tag, step);
     },
-    function(step) {
+    function(err) {
       if (err) {
         bot.reply(message, "adding " + url + " to spreadsheet " + tag + " FAILED! Error: " + err);
       } else {
         bot.reply(message, "added " + url + " to spreadsheet " + tag);
       }
-      step();
     }
   ]);
 });
