@@ -18,6 +18,7 @@ function addToSheet(doc, row, tag, callback) {
   doc.getInfo((err, info) => {
     if (err) {
       console.log('google sheets error:' + err);
+      callback(err);
     }
     const sheetNum = sheetNumber(info.worksheets, tag);
     if (sheetNum === 0) {
@@ -55,7 +56,7 @@ function scrape(url, callback) {
       console.log('parsing html');
       const html = cheerio.load(body);
       console.log('html parsed, adding to spreadsheet');
-      callback({
+      callback(null, {
         pageTitle: extractMetaTagContent(html, 'title'),
         description: extractMetaTagContent(html, 'description')
       });
