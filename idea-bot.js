@@ -49,13 +49,13 @@ function scrape(url, callback) {
       'Accept': '*/*'
     }
   };
-  return request(options, function(error, response, body) {
+  request(options, function(error, response, body) {
     console.log('Request status: ' + response.statusCode + ', body: ' + body);
     if (!error && response.statusCode == 200) {
       console.log('parsing html');
       const html = cheerio.load(body);
       console.log('html parsed, adding to spreadsheet');
-      return callback({
+      callback({
         pageTitle: extractMetaTagContent(html, 'title'),
         description: extractMetaTagContent(html, 'description')
       });
@@ -94,7 +94,7 @@ let bot = controller.spawn({ token: config.SLACK_TOKEN }).startRTM();
 controller.hears(['^#([^ ]*) <([^ ]*)>'], 'direct_message,direct_mention,mention', function(bot, message) {
   let tag = message.match[1];
   let url = message.match[2];
-  async.series([
+  async.waterfall([
     function(step) {
       console.log('Google auth step');
       doc.useServiceAccountAuth(googleCreds, step);
@@ -111,13 +111,13 @@ controller.hears(['^#([^ ]*) <([^ ]*)>'], 'direct_message,direct_mention,mention
         url: url
       };
       addToSheet(doc, row, tag, step);
-    },
-    function(err) {
-      if (err) {
-        bot.reply(message, "adding " + url + " to spreadsheet " + tag + " FAILED! Error: " + err);
-      } else {
-        bot.reply(message, "added " + url + " to spreadsheet " + tag);
-      }
     }
-  ]);
+  ],
+  function(err, results) {
+    if (err) {
+      bot.reply(message, "adding " + url + " to spreadsheet " + tag + " FAILED! Error: " + err);
+    } else {
+      bot.reply(message, "added " + url + " to spreadsheet " + tag);
+    }
+  });
 });
