@@ -55,7 +55,7 @@ function scrape(url, callback) {
       console.log('parsing html');
       const html = cheerio.load(body);
       console.log('html parsed, adding to spreadsheet');
-      callback({
+      return callback({
         pageTitle: extractMetaTagContent(html, 'title'),
         description: extractMetaTagContent(html, 'description')
       });
