@@ -82,11 +82,12 @@ let controller = Botkit.slackbot();
 
 let bot = controller.spawn({ token: config.SLACK_TOKEN }).startRTM();
 
-controller.setupWebserver(process.env.PORT || 3001, function(err, webserver) {
-  controller.createWebhookEndpoints(webserver, bot, function() {
-    // something here later
-  });
-});
+// Start a server to listen for webhooks from Slack. Not implemented at the moment.
+// controller.setupWebserver(process.env.PORT || 3001, function(err, webserver) {
+//   controller.createWebhookEndpoints(webserver, bot, function() {
+//     // something here later
+//   });
+// });
 
 controller.hears(['^#([^ ]*) <([^ ]*)>'], 'direct_message,direct_mention,mention', function(bot, message) {
   let tag = message.match[1];
