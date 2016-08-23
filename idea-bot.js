@@ -49,7 +49,7 @@ function scrape(url, callback) {
       'Accept': '*/*'
     }
   };
-  request(options, function(error, response, body) {
+  return request(options, function(error, response, body) {
     console.log('Request status: ' + response.statusCode + ', body: ' + body);
     if (!error && response.statusCode == 200) {
       console.log('parsing html');
