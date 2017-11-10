@@ -122,3 +122,13 @@ controller.hears(['^#([^ ]*) <([^ ]*)>'], 'direct_message,direct_mention,mention
     }
   });
 });
+
+controller.hears(['.*'], 'direct_message,direct_mention,mention', function(bot, message) {
+  bot.reply(
+    message,
+    "I'm sorry, I didn't recognize that command. To add to your idea lists, send me a direct message " +
+    "or mention @idea-bot followed by a hashtag and the URL you'd like to save. " +
+    "Supported hashtags: #product, #article, #body, #mind, #lifestyle. " +
+    `View your idea lists at ${config.SHAREABLE_SHEET_URL}`
+  );
+});
